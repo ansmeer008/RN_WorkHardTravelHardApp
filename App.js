@@ -13,13 +13,37 @@ import { theme } from "./colors";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Fontisto } from "@expo/vector-icons";
 
+//Challenge
+//1.working이 true인지 false인지 work와 travel 위치 기억하기
+//2.add finished or completed or done state to todo item
+//3.edit text of todo item (show small text input)
+
 export default function App() {
   const [working, setWorking] = useState(true);
   const [text, setText] = useState("");
   const [toDos, setToDos] = useState({});
-  const travel = () => setWorking(false);
-  const work = () => setWorking(true);
+  const travel = () => {
+    setWorking(false);
+    saveWhere(false);
+  };
+  const work = () => {
+    setWorking(true);
+    saveWhere(true);
+  };
   const onChangeText = (e) => setText(e);
+
+  const saveWhere = async (where) => {
+    try {
+      await AsyncStorage.setItem("@where", JSON.stringify(where));
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const loadWhere = async () => {
+    const str = await AsyncStorage.getItem("@where");
+    setWorking(JSON.parse(str));
+  };
 
   const saveToDos = async (toSave) => {
     try {
@@ -63,6 +87,7 @@ export default function App() {
 
   useEffect(() => {
     loadToDos();
+    loadWhere();
   }, []);
   return (
     <View style={styles.container}>
@@ -96,9 +121,21 @@ export default function App() {
           toDos[key].working === working ? (
             <View style={styles.toDo} key={key}>
               <Text style={styles.toDoText}>{toDos[key].text}</Text>
-              <TouchableOpacity onPress={() => deleteToDo(key)}>
-                <Fontisto name="trash" size={18} color={theme.grey} />
-              </TouchableOpacity>
+              <View style={styles.btnBox}>
+                <TouchableOpacity onPress={() => deleteToDo(key)}>
+                  <Fontisto
+                    name="checkbox-passive"
+                    size={18}
+                    color={theme.grey}
+                  />
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => deleteToDo(key)}>
+                  <Fontisto name="eraser" size={18} color={theme.grey} />
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => deleteToDo(key)}>
+                  <Fontisto name="trash" size={18} color={theme.grey} />
+                </TouchableOpacity>
+              </View>
             </View>
           ) : null
         )}
@@ -132,6 +169,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
   toDo: {
+    flex: 1,
     backgroundColor: theme.toDoBg,
     marginBottom: 10,
     paddingVertical: 20,
@@ -142,8 +180,14 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   toDoText: {
+    flex: 7,
     color: "white",
-    fontSize: 16,
-    fontWeight: "500",
+    fontSize: 18,
+    fontWeight: "700",
+  },
+  btnBox: {
+    flex: 3,
+    flexDirection: "row",
+    justifyContent: "space-between",
   },
 });
