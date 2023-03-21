@@ -13,15 +13,11 @@ import { theme } from "./colors";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Fontisto } from "@expo/vector-icons";
 
-//Challenge
-//1.working이 true인지 false인지 work와 travel 위치 기억하기
-//2.add finished or completed or done state to todo item
-//3.edit text of todo item (show small text input)
-
 export default function App() {
   const [working, setWorking] = useState(true);
   const [text, setText] = useState("");
   const [toDos, setToDos] = useState({});
+  const [editText, setEditText] = useState("");
   const travel = () => {
     setWorking(false);
     saveWhere(false);
@@ -31,6 +27,7 @@ export default function App() {
     saveWhere(true);
   };
   const onChangeText = (e) => setText(e);
+  const onEditTextChange = (e) => setEditText(e);
 
   const saveWhere = async (where) => {
     try {
@@ -63,7 +60,7 @@ export default function App() {
       return;
     }
     const newToDos = Object.assign({}, toDos, {
-      [Date.now()]: { text, working, done: false },
+      [Date.now()]: { text, working, done: false, editting: false },
     });
     setToDos(newToDos);
     await saveToDos(newToDos);
@@ -93,6 +90,25 @@ export default function App() {
     };
     setToDos(newToDos);
     await saveToDos(newToDos);
+  };
+
+  const changeEditting = async (key) => {
+    const newToDos = {
+      ...toDos,
+      [key]: { ...toDos[key], editting: !toDos[key].editting },
+    };
+    setToDos(newToDos);
+    await saveToDos(newToDos);
+  };
+
+  const editToDoText = async (key) => {
+    const newToDos = {
+      ...toDos,
+      [key]: { ...toDos[key], text: editText, editting: false },
+    };
+    setToDos(newToDos);
+    await saveToDos(newToDos);
+    setEditText("");
   };
 
   useEffect(() => {
@@ -130,36 +146,57 @@ export default function App() {
         {Object.keys(toDos).map((key) =>
           toDos[key].working === working ? (
             <View style={styles.toDo} key={key}>
-              <Text
-                style={
-                  toDos[key].done
-                    ? { ...styles.toDoText, textDecorationLine: "line-through" }
-                    : styles.toDoText
-                }
-              >
-                {toDos[key].text}
-              </Text>
+              {toDos[key].done ? (
+                <TouchableOpacity
+                  style={{ marginRight: 30 }}
+                  onPress={() => changeDone(key)}
+                >
+                  <Fontisto
+                    name="checkbox-active"
+                    size={18}
+                    color={theme.grey}
+                  />
+                </TouchableOpacity>
+              ) : (
+                <TouchableOpacity
+                  style={{ marginRight: 30 }}
+                  onPress={() => changeDone(key)}
+                >
+                  <Fontisto
+                    name="checkbox-passive"
+                    size={18}
+                    color={theme.grey}
+                  />
+                </TouchableOpacity>
+              )}
+              {toDos[key].editting ? (
+                <TextInput
+                  style={styles.editInput}
+                  onSubmitEditing={() => editToDoText(key)}
+                  defaultValue={toDos[key].text}
+                  onChangeText={onEditTextChange}
+                  returnKeyType="done"
+                />
+              ) : (
+                <Text
+                  style={
+                    toDos[key].done
+                      ? {
+                          ...styles.toDoText,
+                          textDecorationLine: "line-through",
+                        }
+                      : styles.toDoText
+                  }
+                >
+                  {toDos[key].text}
+                </Text>
+              )}
               <View style={styles.btnBox}>
-                {toDos[key].done ? (
-                  <TouchableOpacity onPress={() => changeDone(key)}>
-                    <Fontisto
-                      name="checkbox-active"
-                      size={18}
-                      color={theme.grey}
-                    />
-                  </TouchableOpacity>
-                ) : (
-                  <TouchableOpacity onPress={() => changeDone(key)}>
-                    <Fontisto
-                      name="checkbox-passive"
-                      size={18}
-                      color={theme.grey}
-                    />
+                {toDos[key].done ? null : (
+                  <TouchableOpacity onPress={() => changeEditting(key)}>
+                    <Fontisto name="eraser" size={18} color={theme.grey} />
                   </TouchableOpacity>
                 )}
-                <TouchableOpacity onPress={() => deleteToDo(key)}>
-                  <Fontisto name="eraser" size={18} color={theme.grey} />
-                </TouchableOpacity>
                 <TouchableOpacity onPress={() => deleteToDo(key)}>
                   <Fontisto name="trash" size={18} color={theme.grey} />
                 </TouchableOpacity>
@@ -196,6 +233,13 @@ const styles = StyleSheet.create({
     marginVertical: 20,
     fontSize: 18,
   },
+  editInput: {
+    backgroundColor: "white",
+    paddingVertical: 8,
+    paddingHorizontal: 8,
+    borderRadius: 20,
+    fontSize: 16,
+  },
   toDo: {
     flex: 1,
     backgroundColor: theme.toDoBg,
@@ -216,6 +260,6 @@ const styles = StyleSheet.create({
   btnBox: {
     flex: 3,
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "space-evenly",
   },
 });
