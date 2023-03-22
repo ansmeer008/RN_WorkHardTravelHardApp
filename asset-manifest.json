@@ -1,19 +1,19 @@
 {
   "files": {
-    "main.js": "/static/js/main.1adf6574.js",
-    "static/js/410.20322f39.js": "/static/js/410.20322f39.js",
-    "static/media/Fontisto.ttf": "/static/media/Fontisto.c0edd68811e0237502fe.ttf",
-    "favicon.ico": "/favicon.ico",
-    "index.html": "/index.html",
-    "favicon-32.png": "/favicon-32.png",
-    "favicon-16.png": "/favicon-16.png",
-    "manifest.json": "/manifest.json",
-    "serve.json": "/serve.json",
-    "main.1adf6574.js.map": "/static/js/main.1adf6574.js.map",
-    "410.20322f39.js.map": "/static/js/410.20322f39.js.map"
+    "main.js": "/RN_WorkHardTravelHardApp/static/js/main.57c3716f.js",
+    "static/js/410.20322f39.js": "/RN_WorkHardTravelHardApp/static/js/410.20322f39.js",
+    "static/media/Fontisto.ttf": "/RN_WorkHardTravelHardApp/static/media/Fontisto.c0edd68811e0237502fe.ttf",
+    "favicon.ico": "/RN_WorkHardTravelHardApp/favicon.ico",
+    "index.html": "/RN_WorkHardTravelHardApp/index.html",
+    "favicon-32.png": "/RN_WorkHardTravelHardApp/favicon-32.png",
+    "favicon-16.png": "/RN_WorkHardTravelHardApp/favicon-16.png",
+    "manifest.json": "/RN_WorkHardTravelHardApp/manifest.json",
+    "serve.json": "/RN_WorkHardTravelHardApp/serve.json",
+    "main.57c3716f.js.map": "/RN_WorkHardTravelHardApp/static/js/main.57c3716f.js.map",
+    "410.20322f39.js.map": "/RN_WorkHardTravelHardApp/static/js/410.20322f39.js.map"
   },
   "entrypoints": [
     "static/js/410.20322f39.js",
-    "static/js/main.1adf6574.js"
+    "static/js/main.57c3716f.js"
   ]
 }
