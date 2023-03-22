@@ -1,5 +1,6 @@
 ## RN_WorkHardTravelHardApp
 - 노마드 코더 리액트 네이티브 실습 프로젝트입니다. 
+- 배포 링크 : https://ansmeer008.github.io/RN_WorkHardTravelHardApp/
 
 
 
