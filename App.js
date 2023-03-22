@@ -52,7 +52,9 @@ export default function App() {
 
   const loadToDos = async () => {
     const str = await AsyncStorage.getItem("@toDos");
-    setToDos(JSON.parse(str));
+    if (str) {
+      setToDos(JSON.parse(str));
+    }
   };
 
   const addToDo = async () => {
@@ -102,13 +104,15 @@ export default function App() {
   };
 
   const editToDoText = async (key) => {
-    const newToDos = {
-      ...toDos,
-      [key]: { ...toDos[key], text: editText, editting: false },
-    };
-    setToDos(newToDos);
-    await saveToDos(newToDos);
-    setEditText("");
+    if (editText) {
+      const newToDos = {
+        ...toDos,
+        [key]: { ...toDos[key], text: editText, editting: false },
+      };
+      setToDos(newToDos);
+      await saveToDos(newToDos);
+      setEditText("");
+    }
   };
 
   useEffect(() => {
@@ -121,14 +125,22 @@ export default function App() {
       <View style={styles.header}>
         <TouchableOpacity onPress={work}>
           <Text
-            style={{ ...styles.btnText, color: working ? "white" : theme.grey }}
+            style={{
+              ...styles.btnText,
+              color: working ? "white" : theme.rosy,
+              textDecorationLine: working ? "underline" : "none",
+            }}
           >
             Work
           </Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={travel}>
           <Text
-            style={{ ...styles.btnText, color: working ? theme.grey : "white" }}
+            style={{
+              ...styles.btnText,
+              color: working ? theme.rosy : "white",
+              textDecorationLine: working ? "none" : "underline",
+            }}
           >
             Travel
           </Text>
@@ -145,27 +157,34 @@ export default function App() {
       <ScrollView>
         {Object.keys(toDos).map((key) =>
           toDos[key].working === working ? (
-            <View style={styles.toDo} key={key}>
+            <View
+              style={
+                toDos[key].editting
+                  ? { ...styles.toDo, paddingVertical: 14 }
+                  : styles.toDo
+              }
+              key={key}
+            >
               {toDos[key].done ? (
                 <TouchableOpacity
-                  style={{ marginRight: 30 }}
+                  style={{ marginRight: 30, flex: 2 }}
                   onPress={() => changeDone(key)}
                 >
                   <Fontisto
                     name="checkbox-active"
                     size={18}
-                    color={theme.grey}
+                    color={theme.rosy}
                   />
                 </TouchableOpacity>
               ) : (
                 <TouchableOpacity
-                  style={{ marginRight: 30 }}
+                  style={{ marginRight: 3, flex: 2 }}
                   onPress={() => changeDone(key)}
                 >
                   <Fontisto
                     name="checkbox-passive"
                     size={18}
-                    color={theme.grey}
+                    color={theme.rosy}
                   />
                 </TouchableOpacity>
               )}
@@ -194,11 +213,11 @@ export default function App() {
               <View style={styles.btnBox}>
                 {toDos[key].done ? null : (
                   <TouchableOpacity onPress={() => changeEditting(key)}>
-                    <Fontisto name="eraser" size={18} color={theme.grey} />
+                    <Fontisto name="eraser" size={18} color={theme.rosy} />
                   </TouchableOpacity>
                 )}
                 <TouchableOpacity onPress={() => deleteToDo(key)}>
-                  <Fontisto name="trash" size={18} color={theme.grey} />
+                  <Fontisto name="trash" size={18} color={theme.rosy} />
                 </TouchableOpacity>
               </View>
             </View>
@@ -221,7 +240,7 @@ const styles = StyleSheet.create({
     marginTop: 100,
   },
   btnText: {
-    color: "white",
+    color: theme.rosy,
     fontSize: 38,
     fontWeight: "600",
   },
@@ -237,8 +256,9 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     paddingVertical: 8,
     paddingHorizontal: 8,
-    borderRadius: 20,
+    borderRadius: 10,
     fontSize: 16,
+    width: "60%",
   },
   toDo: {
     flex: 1,
@@ -253,8 +273,8 @@ const styles = StyleSheet.create({
   },
   toDoText: {
     flex: 7,
-    color: "white",
-    fontSize: 16,
+    color: theme.rosy,
+    fontSize: 20,
     fontWeight: "500",
   },
   btnBox: {
